@@ -78,12 +78,16 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
         throw std::runtime_error("Could not set locale C.UTF-8");
     }
 
-    auto conn = sysrepo::Connection{};
-    auto server = rousette::restconf::Server{conn, "::1", "10080"};
+    //MM auto conn = sysrepo::Connection{};
+    //MM auto server = rousette::restconf::Server{conn, "::1", "10080"};
+
+    printf("I am in main of rousette Pos 1\n");
 
     signal(SIGTERM, [](int) {});
     signal(SIGINT, [](int) {});
     pause();
+
+    printf("I am in main of rousette Pos 2\n");
 
     return 0;
 }
