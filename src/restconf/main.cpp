@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <inttypes.h>
 //MM #include <spdlog/sinks/systemd_sink.h>
-#include <spdlog/sinks/ansicolor_sink.h>
+//MM #include <spdlog/sinks/ansicolor_sink.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -22,6 +22,9 @@ namespace {
 /** @short Is stderr connected to journald? Not thread safe. */
 bool is_journald_active()
 {
+    return false;
+
+#if 0 //MM    
     const auto stream = ::getenv("JOURNAL_STREAM");
     if (!stream) {
         return false;
@@ -36,6 +39,7 @@ bool is_journald_active()
         return false;
     }
     return static_cast<uintmax_t>(buf.st_dev) == dev && static_cast<uintmax_t>(buf.st_ino) == inode;
+#endif // 0 MM
 }
 
 /** @short Provide better levels, see https://github.com/gabime/spdlog/pull/1292#discussion_r340777258 */
@@ -61,11 +65,11 @@ public:
 int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
 {
     if (is_journald_active()) {
-        auto sink = std::make_shared<journald_sink<std::mutex>>();
-        auto logger = std::make_shared<spdlog::logger>("rousette", sink);
-        spdlog::set_default_logger(logger);
+        //MM auto sink = std::make_shared<journald_sink<std::mutex>>();
+        //MM auto logger = std::make_shared<spdlog::logger>("rousette", sink);
+        //MM spdlog::set_default_logger(logger);
     }
-    spdlog::set_level(spdlog::level::trace);
+    //MM spdlog::set_level(spdlog::level::trace);
 
     /* We will parse URIs using boost::spirit's alnum/alpha/... matchers which are locale-dependent.
      * Let's use something stable no matter what the system is using
