@@ -74,9 +74,11 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
     /* We will parse URIs using boost::spirit's alnum/alpha/... matchers which are locale-dependent.
      * Let's use something stable no matter what the system is using
      */
+#if 0 //MM -> TODO: This runs into exception on target, for time being, comment it out
     if (!std::setlocale(LC_CTYPE, "C.UTF-8")) {
         throw std::runtime_error("Could not set locale C.UTF-8");
     }
+#endif // 0 MM    
 
     //MM auto conn = sysrepo::Connection{};
     //MM auto server = rousette::restconf::Server{conn, "::1", "10080"};
