@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <inttypes.h>
-#include <spdlog/sinks/systemd_sink.h>
+//MM #include <spdlog/sinks/systemd_sink.h>
 #include <spdlog/sinks/ansicolor_sink.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,10 +40,12 @@ bool is_journald_active()
 
 /** @short Provide better levels, see https://github.com/gabime/spdlog/pull/1292#discussion_r340777258 */
 template<typename Mutex>
-class journald_sink : public spdlog::sinks::systemd_sink<Mutex> {
+//MM class journald_sink : public spdlog::sinks::systemd_sink<Mutex> {
+class journald_sink {
 public:
     journald_sink()
     {
+#if 0 //MM
         this->syslog_levels_ = {/* spdlog::level::trace      */ LOG_DEBUG,
               /* spdlog::level::debug      */ LOG_INFO,
               /* spdlog::level::info       */ LOG_NOTICE,
@@ -51,6 +53,7 @@ public:
               /* spdlog::level::err        */ LOG_ERR,
               /* spdlog::level::critical   */ LOG_CRIT,
               /* spdlog::level::off        */ LOG_ALERT};
+#endif // 0 MM        
     }
 };
 }
