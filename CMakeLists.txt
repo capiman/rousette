@@ -117,6 +117,7 @@ target_link_libraries(watch-operational-ds PUBLIC rousette-sysrepo)
 
 add_executable(rousette src/restconf/main.cpp)
 # target_link_libraries(rousette PUBLIC rousette-restconf PkgConfig::SYSTEMD)
+target_link_libraries(rousette PUBLIC rousette-restconf)
 
 install(TARGETS
     # clock-demo
