@@ -81,7 +81,7 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
 #endif // 0 MM    
 
     auto conn = sysrepo::Connection{};
-    auto server = rousette::restconf::Server{conn, "::1", "10080"};
+    auto server = rousette::restconf::Server{conn, "10.6.128.27", "10080"};
 
     printf("I am in main of rousette Pos 1\n");
 
