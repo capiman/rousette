@@ -11,6 +11,7 @@
 #include <inttypes.h>
 //MM #include <spdlog/sinks/systemd_sink.h>
 //MM #include <spdlog/sinks/ansicolor_sink.h>
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -20,11 +21,12 @@
 
 namespace {
 /** @short Is stderr connected to journald? Not thread safe. */
+#if 0 // MM
 bool is_journald_active()
 {
     return false;
 
-#if 0 //MM    
+#if 0 //MM
     const auto stream = ::getenv("JOURNAL_STREAM");
     if (!stream) {
         return false;
@@ -41,6 +43,7 @@ bool is_journald_active()
     return static_cast<uintmax_t>(buf.st_dev) == dev && static_cast<uintmax_t>(buf.st_ino) == inode;
 #endif // 0 MM
 }
+#endif // 0 MM
 
 /** @short Provide better levels, see https://github.com/gabime/spdlog/pull/1292#discussion_r340777258 */
 template<typename Mutex>
@@ -57,19 +60,21 @@ public:
               /* spdlog::level::err        */ LOG_ERR,
               /* spdlog::level::critical   */ LOG_CRIT,
               /* spdlog::level::off        */ LOG_ALERT};
-#endif // 0 MM        
+#endif // 0 MM
     }
 };
 }
 
 int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
 {
-    if (is_journald_active()) {
+    // if (is_journald_active()) {
         //MM auto sink = std::make_shared<journald_sink<std::mutex>>();
+        //MM auto sink = std::make_shared<journald_sink>();
         //MM auto logger = std::make_shared<spdlog::logger>("rousette", sink);
-        //MM spdlog::set_default_logger(logger);
-    }
-    //MM spdlog::set_level(spdlog::level::trace);
+        auto logger = spdlog::stdout_color_mt("console");
+        spdlog::set_default_logger(logger);
+    // }
+    spdlog::set_level(spdlog::level::trace);
 
     /* We will parse URIs using boost::spirit's alnum/alpha/... matchers which are locale-dependent.
      * Let's use something stable no matter what the system is using
@@ -78,7 +83,7 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
     if (!std::setlocale(LC_CTYPE, "C.UTF-8")) {
         throw std::runtime_error("Could not set locale C.UTF-8");
     }
-#endif // 0 MM    
+#endif // 0 MM
 
     auto conn = sysrepo::Connection{};
     auto server = rousette::restconf::Server{conn, "10.6.128.27", "10080"};
