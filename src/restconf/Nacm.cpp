@@ -82,12 +82,15 @@ namespace rousette::restconf {
 Nacm::Nacm(sysrepo::Connection conn)
     : m_srSession(conn.sessionStart(sysrepo::Datastore::Running))
     , m_srSub(m_srSession.initNacm())
-    , m_anonymousEnabled{true} //MM JUST FOR TESTING -> TODO!!!
+    , m_anonymousEnabled{false} //MM JUST FOR TESTING -> TODO!!!
 {
     m_srSub.onModuleChange(
         "ietf-netconf-acm", [&](auto session, auto, auto, auto, auto, auto) {
             m_anonymousEnabled = validAnonymousNacmRules(session, ANONYMOUS_USER_GROUP);
             spdlog::info("NACM config validation: Anonymous user access {}", m_anonymousEnabled ? "enabled" : "disabled");
+            spdlog::info("*** PATCH TO ANONYMOUS ACCESS ALLOWED ***");
+            m_anonymousEnabled = true;
+            spdlog::info("NACM config validation (PATCHED!): Anonymous user access {}", m_anonymousEnabled ? "enabled" : "disabled");
             return sysrepo::ErrorCode::Ok;
         },
         std::nullopt,
