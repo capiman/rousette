@@ -82,7 +82,7 @@ namespace rousette::restconf {
 Nacm::Nacm(sysrepo::Connection conn)
     : m_srSession(conn.sessionStart(sysrepo::Datastore::Running))
     , m_srSub(m_srSession.initNacm())
-    , m_anonymousEnabled{false}
+    , m_anonymousEnabled{true} //MM JUST FOR TESTING -> TODO!!!
 {
     m_srSub.onModuleChange(
         "ietf-netconf-acm", [&](auto session, auto, auto, auto, auto, auto) {
