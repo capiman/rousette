@@ -115,11 +115,15 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
 
     auto conn = sysrepo::Connection{};
 
-    if(argc == 1) auto server = rousette::restconf::Server{conn, "10.6.128.27", "10080"};
+    char *serveraddr = (const char *)"";
+
+    if(argc == 1) serveraddr = "10.6.128.27";
     else
     {
-        auto server = rousette::restconf::Server{conn, argv[1], "10080"};
+        serveraddr = argv[1];
     }
+
+    auto server = rousette::restconf::Server{conn, serveraddr, "10080"};
 
     printf("I am in main of rousette Pos 1\n");
 
