@@ -19,6 +19,10 @@
 #include <sysrepo-cpp/Session.hpp>
 #include "restconf/Server.h"
 
+#include <ifaddrs.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+
 namespace {
 /** @short Is stderr connected to journald? Not thread safe. */
 #if 0 // MM
@@ -85,8 +89,37 @@ int main(int argc [[maybe_unused]], char* argv [[maybe_unused]] [])
     }
 #endif // 0 MM
 
+    {
+        struct ifaddrs *ifaddr, *ifa;
+        char addr[INET_ADDRSTRLEN];
+
+        if (getifaddrs(&ifaddr) == -1) {
+            perror("getifaddrs");
+            exit(EXIT_FAILURE);
+        }
+
+        // Iterate over linked list of interfaces
+        for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+            if (ifa->ifa_addr == NULL) continue;
+
+            // Check for IPv4 family
+            if (ifa->ifa_addr->sa_family == AF_INET) {
+                struct sockaddr_in *sa = (struct sockaddr_in *)ifa->ifa_addr;
+                inet_ntop(AF_INET, &(sa->sin_addr), addr, INET_ADDRSTRLEN);
+                printf("Interface: %s, IP Address: %s\n", ifa->ifa_name, addr);
+            }
+        }
+
+        freeifaddrs(ifaddr);
+    }
+
     auto conn = sysrepo::Connection{};
-    auto server = rousette::restconf::Server{conn, "10.6.128.27", "10080"};
+
+    if(argc == 1) auto server = rousette::restconf::Server{conn, "10.6.128.27", "10080"};
+    else
+    {
+        auto server = rousette::restconf::Server{conn, argv[1], "10080"};
+    }
 
     printf("I am in main of rousette Pos 1\n");
 
